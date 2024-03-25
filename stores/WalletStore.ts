@@ -2,11 +2,14 @@ import { makeAutoObservable } from 'mobx';
 import axios from 'axios';
 import { Alert } from 'react-native';
 
-interface Wallet {
+export interface Wallet {
+  privateKey: string
   // Define properties for wallet
 }
 
-interface Transaction {
+export interface Transaction {
+    amount: string;
+    receiverAddress: string;
   // Define properties for transaction
 }
 
@@ -24,26 +27,26 @@ class WalletStore {
 
   constructor() {
     makeAutoObservable(this);
-    // this.fetchLivePrices()
+    this.fetchLivePrices()
   }
 
   async fetchLivePrices() {
     try {
         this.loading = true;
-        const endpoint = `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,usd-coin&vs_currencies=${this.currency}`;
+        const endpoint = `https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,usd-coin&vs_currencies=${this.currency ?? "USD"}`;
         console.log( endpoint)
 
         const response = await axios.get(endpoint);
 
         const { data } = response;
-        console.log(data, endpoint)
-        const bitcoinPriceUSD = data['bitcoin'][this.currency.toLowerCase()];
-        const usdCoinPriceUSD = data['usd-coin'][this.currency.toLowerCase()];
+        const currencyType = this.currency ? this.currency.toLowerCase(): "usd"
+        console.log(data, endpoint,  currencyType)
+        const bitcoinPriceUSD = data['bitcoin'][currencyType];
+        const usdCoinPriceUSD = data['usd-coin'][currencyType];
 
         if (bitcoinPriceUSD && usdCoinPriceUSD) {
             this.bitcoinPrice = bitcoinPriceUSD;
             this.usdtPrice = usdCoinPriceUSD;
-            Alert.alert("Live price updated");
         } else {
             console.error('Error: Bitcoin or USDT price not found in response');
         }
