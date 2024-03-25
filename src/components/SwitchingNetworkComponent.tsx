@@ -42,7 +42,7 @@ const SwitchNetworkComponent: React.FC = observer(() => {
 
   return (
     <View>
-      <Button title={buttonTitle} onPress={handleSwitchCurrency} />
+      <Button title={buttonTitle} onPress={handleSwitchCurrency} disabled/>
 
       <Button title={buttonTitleNetwork} onPress={handleSwitchNetwork} />
     </View>
